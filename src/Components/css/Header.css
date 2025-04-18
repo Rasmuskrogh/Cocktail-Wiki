@@ -22,8 +22,23 @@ header {
     }
   }
   h1 {
-    font-family: "Julius Sans One", sans-serif, Arial, Helvnpm run devnpm run devetica;
+    font-family: "Julius Sans One", sans-serif, Arial,
+      Helvnpm run devnpm run devetica;
     color: bisque;
     padding-left: 5rem;
+  }
+}
+
+@media (width < 630px) {
+  header {
+    flex-direction: column;
+    a {
+      h1 {
+        padding-left: 0;
+      }
+    }
+    div {
+      margin-right: 0;
+    }
   }
 }
