@@ -16,7 +16,7 @@
 .favorites-title {
   font-family: "Julius Sans One", sans-serif, Arial, Helvetica;
   text-align: center;
-  padding-top: 4rem;
+  padding: 4rem 0 2rem 0;
   color: rgb(49, 71, 89);
   font-size: 3.5rem;
 }
@@ -26,4 +26,25 @@
   text-align: center;
   padding-top: 2rem;
   color: rgb(49, 71, 89);
+}
+
+@media (width < 800px) {
+  .favorites-title {
+    font-size: 3rem;
+  }
+}
+
+@media (width < 620px) {
+  .favorites-grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
+  .favorites-title {
+    font-size: 2.5rem;
+  }
+}
+
+@media (width < 465px) {
+  .favorites-title {
+    font-size: 2rem;
+  }
 }

@@ -96,3 +96,19 @@
 .bottom {
   padding-bottom: 2rem;
 }
+
+@media (width < 800px) {
+  .search-form {
+    gap: 1rem;
+    div {
+      flex-direction: column;
+      gap: 1rem;
+    }
+  }
+}
+
+@media (width < 620px) {
+  .drink-card-grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
