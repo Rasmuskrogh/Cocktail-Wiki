@@ -59,7 +59,8 @@
 }
 
 .small-list-cards {
-  width: 35rem;
+  width: 100%;
+  max-width: 35rem;
   box-shadow: 0 4px 8px rgba(49, 71, 89, 0.1);
   border: 1px solid rgba(255, 228, 196, 0.2);
   background: linear-gradient(145deg, #f0f0f0, #e0e0e0);
@@ -108,3 +109,10 @@
     font-size: 1.2em;
   }
 }
+
+/* @media (max-width: 635px) {
+  .small-list-cards {
+    width: 100%;
+  }
+}
+ */

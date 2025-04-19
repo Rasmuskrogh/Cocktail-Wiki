@@ -1,13 +1,28 @@
 .list-title {
   padding-top: 3rem;
-  width: 35rem;
+  width: 100%;
+  max-width: 35rem;
   text-align: left;
 }
+
 .drink-card-list {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  width: 35rem;
+  width: 100%;
+  max-width: 35rem;
   margin-top: 2rem;
   margin-bottom: 2rem;
+}
+
+@media (max-width: 635px) {
+  .list-title {
+    padding-top: 2rem;
+    font-size: 1.5rem;
+  }
+
+  .drink-card-list {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
 }

@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Julius+Sans+One&display=swap");
 
 .drink-info {
-  padding: 4rem 0;
+  padding: 4rem 2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -15,7 +15,8 @@
       img {
         width: 100%;
         border-radius: 15px;
-        box-shadow: 0px 12px 24px rgba(49, 71, 89, 0.15), 0px 6px 12px rgba(49, 71, 89, 0.1);
+        box-shadow: 0px 12px 24px rgba(49, 71, 89, 0.15),
+          0px 6px 12px rgba(49, 71, 89, 0.1);
       }
     }
   }
@@ -39,7 +40,8 @@
 
   .ingredients {
     background-color: rgb(49, 71, 89);
-    box-shadow: 0px 12px 24px rgba(49, 71, 89, 0.15), 0px 6px 12px rgba(49, 71, 89, 0.1);
+    box-shadow: 0px 12px 24px rgba(49, 71, 89, 0.15),
+      0px 6px 12px rgba(49, 71, 89, 0.1);
     color: bisque;
     width: 35rem;
     margin-top: 2rem;
@@ -110,5 +112,47 @@
   .share-button {
     width: 12rem;
     align-self: center;
+  }
+}
+
+@media (max-width: 635px) {
+  .drink-info {
+    .image-wrapper {
+      width: 100%;
+      .image {
+        width: 100%;
+        padding-bottom: 1rem;
+      }
+    }
+
+    .header-icon-container {
+      h1 {
+        font-size: 2rem;
+      }
+
+      .icon img {
+        height: 3rem;
+      }
+    }
+
+    .ingredients {
+      width: 100%;
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .instructions {
+      width: 100%;
+
+      .instructions-text {
+        font-size: 0.9rem;
+      }
+    }
+  }
+}
+
+@media (width < 450px) {
+  .drink-info {
+    padding: 2rem 1rem;
   }
 }
