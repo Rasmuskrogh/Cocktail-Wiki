@@ -43,23 +43,24 @@ function IngredientPage() {
 
   // fetch ingredient by name
   useEffect(() => {
-    const getIngredientByName = async () => {
+    if (descRef.current) {
+      setDescHeight(480);
+    }
+  }, []);
+
+  useEffect(() => {
+    const getIngredientInfo = async () => {
       try {
         const response = await fetch(
           `https://www.thecocktaildb.com/api/json/v1/1/search.php?i=${name}`
         );
         const data = await response.json();
 
-        // check if it finds the ingredient
         if (!data.ingredients || data.ingredients.length === 0) {
-          navigate("/not-found"); // if not to not found page
+          navigate("/not-found");
           return;
         }
-        // fetch image by name
-        const imgResponse = await fetch(
-          `https://www.thecocktaildb.com/images/ingredients/${name}.png`
-        );
-        //set data for ingredients
+
         setActiveIngredient({
           name: data.ingredients[0].strIngredient,
           id: data.ingredients[0].idIngredient,
@@ -67,15 +68,15 @@ function IngredientPage() {
           type: data.ingredients[0].strType,
           alcohol: data.ingredients[0].strAlcohol,
           strength: data.ingredients[0].strABV,
-          image: imgResponse.url,
+          image: `https://www.thecocktaildb.com/images/ingredients/${data.ingredients[0].strIngredient}.png`,
         });
       } catch (error) {
         console.error("Error fetching ingredient data:", error);
-        navigate("/not-found"); // if there is an error from the API then it redirects to not found
+        navigate("/not-found");
       }
     };
 
-    getIngredientByName();
+    getIngredientInfo();
   }, [name, navigate]);
 
   // if description is bigger than max height, set it to max height
@@ -104,7 +105,11 @@ function IngredientPage() {
 
           <h3>{activeIngredient.type}</h3>
           <p>Alcoholic: {activeIngredient.alcohol}</p>
-          {activeIngredient.strength ? <p>Strength: {activeIngredient.strength}%</p> : ""}
+          {activeIngredient.strength ? (
+            <p>Strength: {activeIngredient.strength}%</p>
+          ) : (
+            ""
+          )}
         </section>
         {activeIngredient.description ? (
           <section

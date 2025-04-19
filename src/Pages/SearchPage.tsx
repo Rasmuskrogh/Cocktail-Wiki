@@ -8,6 +8,24 @@ import Select from "../Components/Select";
 import { SearchContext } from "../Context/SearchContext";
 import ScrollToTop from "../Components/ScrollToTop";
 
+interface IDrinkResponse {
+  strDrink: string;
+  idDrink: string;
+  strDrinkThumb: string;
+}
+
+interface ICategoryResponse {
+  strCategory: string;
+}
+
+interface IGlassResponse {
+  strGlass: string;
+}
+
+interface IIngredientResponse {
+  strIngredient1: string;
+}
+
 function SearchPage() {
   // STATES & ref
   // pagination
@@ -66,19 +84,39 @@ function SearchPage() {
       }
       // check all filter options if active, and make sure searchTerm is set to true after
       if (category) {
-        currentDrinks = await filterSearch("c", category, currentDrinks, searchTerm);
+        currentDrinks = await filterSearch(
+          "c",
+          category,
+          currentDrinks,
+          searchTerm
+        );
         searchTerm = true;
       }
       if (glass) {
-        currentDrinks = await filterSearch("g", glass, currentDrinks, searchTerm);
+        currentDrinks = await filterSearch(
+          "g",
+          glass,
+          currentDrinks,
+          searchTerm
+        );
         searchTerm = true;
       }
       if (ingredient) {
-        currentDrinks = await filterSearch("i", ingredient, currentDrinks, searchTerm);
+        currentDrinks = await filterSearch(
+          "i",
+          ingredient,
+          currentDrinks,
+          searchTerm
+        );
         searchTerm = true;
       }
       if (alcohol) {
-        currentDrinks = await filterSearch("a", alcohol, currentDrinks, searchTerm);
+        currentDrinks = await filterSearch(
+          "a",
+          alcohol,
+          currentDrinks,
+          searchTerm
+        );
         searchTerm = true;
       }
 
@@ -92,15 +130,17 @@ function SearchPage() {
           !alcohol
         ) {
           setFoundDrinks([]);
-          setSearchMessage("Please enter a valid search term or apply a filter");
+          setSearchMessage(
+            "Please enter a valid search term or apply a filter"
+          );
         } else {
           // set drink message and set found drinks based on current drinks
           messageForDrinksFound(currentDrinks!);
           setFoundDrinks(
-            currentDrinks!.map((drink: any) => ({
+            currentDrinks!.map((drink: IDrinkResponse) => ({
               name: drink.strDrink,
               id: drink.idDrink,
-              image: drink.strDrinkThumb,
+              image: drink.strDrinkThumb + "/preview",
             }))
           );
         }
@@ -118,7 +158,7 @@ function SearchPage() {
   const filterSearch = async (
     filterKey: string,
     filterTerm: HTMLSelectElement,
-    currentDrinks: any,
+    currentDrinks: IDrinkResponse[] | undefined,
     searchTerm: boolean
   ) => {
     try {
@@ -127,19 +167,21 @@ function SearchPage() {
       );
       const data = await response.json();
       // if searchTerm is true, compare response data to currentDrinks and filter out the matches into currentDrinks
-      if (searchTerm) {
-        currentDrinks = currentDrinks.filter((currentDrink: any) =>
-          data.drinks.some((drink: any) => drink.idDrink === currentDrink.idDrink)
+      if (searchTerm && currentDrinks) {
+        currentDrinks = currentDrinks.filter((currentDrink: IDrinkResponse) =>
+          data.drinks.some(
+            (drink: IDrinkResponse) => drink.idDrink === currentDrink.idDrink
+          )
         );
         return currentDrinks;
         // if searchTerm is false, set currentDrinks to response data directly
         // (cannot just check if currentDrinks is an empty array, since a valid search still could result in no results)
       } else {
-        currentDrinks = data.drinks;
-        return currentDrinks;
+        return data.drinks;
       }
     } catch (error) {
       console.log(error);
+      return [];
     }
   };
 
@@ -185,20 +227,32 @@ function SearchPage() {
         );
         const data = await response.json();
         const filterOptions = data.drinks.map(
-          (drink: { [key: string]: string }) => drink[filterType]
+          (
+            drink:
+              | ICategoryResponse
+              | IGlassResponse
+              | IIngredientResponse
+              | { strAlcoholic: string }
+          ) => drink[filterType as keyof typeof drink]
         );
 
         return filterOptions;
       } catch (error) {
         console.log(error);
+        return [];
       }
     };
     // get arrays of all the filter options
     const setupFilters = async () => {
-      setFiltersCategory(await getFilters("c", "strCategory"));
-      setFiltersGlass(await getFilters("g", "strGlass"));
-      setFiltersIngredient(await getFilters("i", "strIngredient1"));
-      setFiltersAlcohol(await getFilters("a", "strAlcoholic"));
+      const categoryFilters = await getFilters("c", "strCategory");
+      const glassFilters = await getFilters("g", "strGlass");
+      const ingredientFilters = await getFilters("i", "strIngredient1");
+      const alcoholFilters = await getFilters("a", "strAlcoholic");
+
+      if (categoryFilters) setFiltersCategory(categoryFilters);
+      if (glassFilters) setFiltersGlass(glassFilters);
+      if (ingredientFilters) setFiltersIngredient(ingredientFilters);
+      if (alcoholFilters) setFiltersAlcohol(alcoholFilters);
     };
     setupFilters();
   }, []);
@@ -224,10 +278,26 @@ function SearchPage() {
           </div>
           <h2>Filters</h2>
           <div className="filters">
-            <Select id="category" label="Select Category:" options={filtersCategory}></Select>
-            <Select id="glass" label="Select Glass:" options={filtersGlass}></Select>
-            <Select id="ingredient" label="Select Ingredient:" options={filtersIngredient}></Select>
-            <Select id="alcohol" label="Alcohol status:" options={filtersAlcohol}></Select>
+            <Select
+              id="category"
+              label="Select Category:"
+              options={filtersCategory}
+            ></Select>
+            <Select
+              id="glass"
+              label="Select Glass:"
+              options={filtersGlass}
+            ></Select>
+            <Select
+              id="ingredient"
+              label="Select Ingredient:"
+              options={filtersIngredient}
+            ></Select>
+            <Select
+              id="alcohol"
+              label="Alcohol status:"
+              options={filtersAlcohol}
+            ></Select>
           </div>
         </form>
       </section>
@@ -236,11 +306,19 @@ function SearchPage() {
         ""
       ) : (
         <section className="searchPage-button-section">
-          <Button onClick={prevPage} label={"Back"} disabled={currentPage === 1 ? true : false} />
+          <Button
+            onClick={prevPage}
+            label={"Back"}
+            disabled={currentPage === 1 ? true : false}
+          />
           <Button
             onClick={nextPage}
             label={"Next"}
-            disabled={currentPage === Math.ceil(foundDrinks!.length / drinksPerPage) ? true : false}
+            disabled={
+              currentPage === Math.ceil(foundDrinks!.length / drinksPerPage)
+                ? true
+                : false
+            }
           />
         </section>
       )}
@@ -264,11 +342,19 @@ function SearchPage() {
         ""
       ) : (
         <section className="searchPage-button-section bottom">
-          <Button onClick={prevPage} label={"Back"} disabled={currentPage === 1 ? true : false} />
+          <Button
+            onClick={prevPage}
+            label={"Back"}
+            disabled={currentPage === 1 ? true : false}
+          />
           <Button
             onClick={nextPage}
             label={"Next"}
-            disabled={currentPage === Math.ceil(foundDrinks!.length / drinksPerPage) ? true : false}
+            disabled={
+              currentPage === Math.ceil(foundDrinks!.length / drinksPerPage)
+                ? true
+                : false
+            }
           />
         </section>
       )}

@@ -32,6 +32,7 @@ header {
 @media (width < 630px) {
   header {
     flex-direction: column;
+    gap: 1rem;
     a {
       h1 {
         padding-left: 0;

@@ -50,6 +50,7 @@ function LandingPage() {
     }
   };
 
+  // fetch random drink
   useEffect(() => {
     handleOnGetRandomDrink();
   }, [isNonAlcoholic]);

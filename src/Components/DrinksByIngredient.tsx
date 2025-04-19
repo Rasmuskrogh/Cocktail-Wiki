@@ -37,11 +37,17 @@ function DrinksByIngredient({ name }: IDrinksbyIngredient) {
 
       if (data.drinks !== null) {
         setListOfDrinks(
-          data.drinks.map((drink: any) => ({
-            name: drink.strDrink,
-            id: drink.idDrink,
-            image: drink.strDrinkThumb + "/preview", // added preview for smaller sized pictures
-          }))
+          data.drinks.map(
+            (drink: {
+              strDrink: string;
+              idDrink: string;
+              strDrinkThumb: string;
+            }) => ({
+              name: drink.strDrink,
+              id: drink.idDrink,
+              image: drink.strDrinkThumb + "/preview", // added preview for smaller sized pictures
+            })
+          )
         );
       } else {
         setListOfDrinks([]);
@@ -60,7 +66,9 @@ function DrinksByIngredient({ name }: IDrinksbyIngredient) {
 
   return (
     <>
-      {currentDrinks.length !== 0 ? <h2 className="list-title">{name} is used to make:</h2> : null}
+      {currentDrinks.length !== 0 ? (
+        <h2 className="list-title">{name} is used to make:</h2>
+      ) : null}
 
       <section className="drink-card-list">
         {currentDrinks.map((drink) => (
@@ -75,7 +83,9 @@ function DrinksByIngredient({ name }: IDrinksbyIngredient) {
       </section>
       {
         // only show message when there are still drinks to show
-        listOfDrinks.length / drinksPerBatch > drinkBatch ? <p>scroll to load more drinks</p> : null
+        listOfDrinks.length / drinksPerBatch > drinkBatch ? (
+          <p>scroll to load more drinks</p>
+        ) : null
       }
     </>
   );

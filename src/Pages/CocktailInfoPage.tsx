@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useCallback } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import Heart from "../assets/heart.svg";
 import HeartFilled from "../assets/heart-fill.svg";
@@ -9,10 +9,9 @@ import { IDrinkInfo } from "../interfaces";
 import Button from "../Components/Button";
 
 function CocktailInfoPage() {
-  let { id } = useParams();
+  const { id } = useParams();
   const navigate = useNavigate();
-
-  // STATES
+  const { favoriteDrinks, setFavoriteDrinks } = useContext(FavoritesContext);
   const [activeDrink, setActiveDrink] = useState<IDrinkInfo>({
     name: "",
     id: 0,
@@ -25,23 +24,19 @@ function CocktailInfoPage() {
     instructions: [],
   });
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
-  const { favoriteDrinks, setFavoriteDrinks } = useContext(FavoritesContext);
   const [linkCopied, setLinkCopied] = useState<boolean>(false);
 
-  // Function to check if drink is in favorites based on FavoritesContext
-  const checkIfInFavorites = () => {
-    if (favoriteDrinks) {
-      const isDrinkActive = favoriteDrinks.find(
-        (favoriteDrink) => Number(id) === Number(favoriteDrink.id)
+  const checkIfInFavorites = useCallback(() => {
+    if (favoriteDrinks && activeDrink.id !== 0) {
+      setIsFavorite(
+        favoriteDrinks.some((drink) => drink.id === activeDrink.id)
       );
-
-      if (isDrinkActive) {
-        setIsFavorite(true);
-      } else {
-        setIsFavorite(false);
-      }
     }
-  };
+  }, [favoriteDrinks, activeDrink.id]);
+
+  useEffect(() => {
+    checkIfInFavorites();
+  }, [checkIfInFavorites]);
 
   // function to copy cocktail link to clipboard
   const shareCocktailLink = () => {
@@ -49,10 +44,6 @@ function CocktailInfoPage() {
     navigator.clipboard.writeText(cocktailUrl);
     setLinkCopied(true);
   };
-
-  useEffect(() => {
-    checkIfInFavorites();
-  }, []);
 
   // Adds or removes drink to favorite
   useEffect(() => {
@@ -66,7 +57,9 @@ function CocktailInfoPage() {
         });
         setFavoriteDrinks(favorites);
       } else {
-        const newFavorites = favorites.filter((favorite) => favorite.id !== activeDrink.id);
+        const newFavorites = favorites.filter(
+          (favorite) => favorite.id !== activeDrink.id
+        );
         setFavoriteDrinks(newFavorites);
       }
     }
@@ -140,7 +133,10 @@ function CocktailInfoPage() {
             </figure>
             <div className="header-icon-container">
               <h1>{activeDrink.name}</h1>
-              <figure className="icon" onClick={() => setIsFavorite((prev) => !prev)}>
+              <figure
+                className="icon"
+                onClick={() => setIsFavorite((prev) => !prev)}
+              >
                 <img src={isFavorite ? HeartFilled : Heart} alt="" />
               </figure>
             </div>
